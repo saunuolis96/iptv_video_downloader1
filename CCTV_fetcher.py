@@ -54,6 +54,13 @@ def scrape_bs(url, session):
     return folders_to_visit2
 
 def get_session(url, username, password):
+    '''
+    Will login with CCTV camera ang save session for futher video files download
+    :param url:
+    :param username:
+    :param password:
+    :return:
+    '''
     s = requests.session()
     s.auth = requests.auth.HTTPDigestAuth(username, password)
     r = s.get(url)
@@ -61,6 +68,11 @@ def get_session(url, username, password):
     return s
 
 def iterate_camera(url, folder_path, mine_session, folders_to_visit ):
+    '''
+    This will iterate within folders and download all video files within folders
+    It will not download the latest video file from last folder  - with idea that it is still being written by
+    CCTV camera
+    '''
     for month in folders_to_visit:
         whatsthere_day = scrape_bs(url + ''.join(month), mine_session)
         for day in whatsthere_day[:-1]:
@@ -109,6 +121,9 @@ if __name__ == '__main__':
     rtn_folders = scrape_bs(url, mine_session)   # ffrom here I get Yearly/monthly folder
     iterate_camera(url, folder_path, mine_session, rtn_folders)
     print('All files downloaded')
+
+    #TODO: Need to make it save for crontab to avoid running multiple versions
+    # Need to make different versions  for multithreading for multiple cameras/
 
 
 
